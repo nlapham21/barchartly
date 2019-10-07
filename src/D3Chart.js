@@ -64,9 +64,21 @@ export default class D3Chart {
         const yAxisCall = d3.axisLeft(y);
         vis.yAxisGroup.call(yAxisCall);
 
-        // Bar chart rectangles
+        // DATA JOIN (associates any rects on screen with our data, or creates new rects if needed)
         const rects = vis.svg.selectAll("rect")
             .data(vis.data)
+
+        // EXIT (removes any elements that dont exist in the new array of data)
+        rects.exit().remove()
+
+        // UPDATE (updates the attributes of the rects that exist in our data AND are already on screen)
+        rects
+            .attr("x", d => x(d.name))
+            .attr("y", d => y(d.height))
+            .attr("width", x.bandwidth)
+            .attr("height", d => HEIGHT - y(d.height))
+
+        // ENTER (appending rects and updating attrs for anything in our data array but ISNT on screen yet)
         rects.enter()
             .append("rect")
             .attr("x", d => x(d.name))
