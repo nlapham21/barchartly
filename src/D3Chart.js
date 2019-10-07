@@ -71,31 +71,37 @@ export default class D3Chart {
 
         // Axis updates
         const xAxisCall = d3.axisBottom(x);
-        vis.xAxisGroup.call(xAxisCall);
+        vis.xAxisGroup.transition().duration(500).call(xAxisCall);
+
         const yAxisCall = d3.axisLeft(y);
-        vis.yAxisGroup.call(yAxisCall);
+        vis.yAxisGroup.transition().duration(500).call(yAxisCall);
 
         // DATA JOIN (associates any rects on screen with our data, or creates new rects if needed)
         const rects = vis.svg.selectAll("rect")
             .data(vis.data)
 
         // EXIT (removes any elements that dont exist in the new array of data)
-        rects.exit().remove()
+        rects.exit()
+            .transition().duration(500)
+                .attr("height", 0)
+                .attr("y", HEIGHT)
+                .remove()
 
         // UPDATE (updates the attributes of the rects that exist in our data AND are already on screen)
-        rects
+        rects.transition().duration(500)
             .attr("x", d => x(d.name))
             .attr("y", d => y(d.height))
             .attr("width", x.bandwidth)
             .attr("height", d => HEIGHT - y(d.height))
 
         // ENTER (appending rects and updating attrs for anything in our data array but ISNT on screen yet)
-        rects.enter()
-            .append("rect")
+        rects.enter().append("rect")
             .attr("x", d => x(d.name))
-            .attr("y", d => y(d.height))
             .attr("width", x.bandwidth)
-            .attr("height", d => HEIGHT - y(d.height))
             .attr("fill", "grey")
+            .attr("y", HEIGHT) // Added so the transition starts at the bottom of the chart
+            .transition().duration(500)
+                .attr("height", d => HEIGHT - y(d.height))
+                .attr("y", d => y(d.height))
     }
 }
