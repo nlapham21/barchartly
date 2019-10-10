@@ -22,7 +22,7 @@ class App extends Component {
                         <Col xs={12}><GenderDropdown genderSelected={this.genderSelected}/></Col>
                     </Row>
                     <Row>
-                        <Col xs={12}><ChartWrapper /></Col>
+                        <Col xs={12}><ChartWrapper gender={this.state.gender}/></Col>
                     </Row>
                 </Container>
             </div>

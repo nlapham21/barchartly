@@ -19,7 +19,7 @@ export default class D3Chart {
                 .attr("transform",  `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
 
         // Labels
-        vis.svg.append("text")
+        vis.xLabel = vis.svg.append("text")
             .attr("x", WIDTH / 2)
             .attr("y", HEIGHT + MARGIN.BOTTOM)
             .attr("text-anchor", "middle")
@@ -42,21 +42,18 @@ export default class D3Chart {
         // Fetch data
         Promise.all([menPromise, womenPromise]).then((dataSet) => {
             const [men, women] = dataSet
-            let flag = true;
 
-            vis.data = men
-            vis.update();
+            vis.menData = men
+            vis.womenData = women
 
-            d3.interval(() => {
-                vis.data = flag ? men : women
-                vis.update();
-                flag = !flag
-            }, 1000);
+            vis.update('men');
         });
     }
 
-    update() {
+    update(gender) {
         var vis = this;
+        vis.data = gender === 'men' ? vis.menData : vis.womenData
+        vis.xLabel.text(`The world's tallest ${gender}`)
         // Scales
         const y = d3.scaleLinear()
             .domain([
